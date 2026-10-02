@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tests — Diario de Estudio</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .resultado { font-family: var(--letra-sans); font-size: 0.9375rem; margin: 4px 0; }
+    .resultado.ok::before { content: "✔ "; color: #1d6b35; }
+    .resultado.fallo { color: #a3182b; font-weight: 600; }
+    .resultado.fallo::before { content: "✘ "; }
+    .detalle-fallo { display: block; font-weight: normal; white-space: pre-wrap; }
+    .total { font-size: 1.25rem; font-weight: bold; }
+    .total.fallo { color: #a3182b; }
+    .total.ok { color: #1d6b35; }
+  </style>
+</head>
+<body>
+  <main class="contenedor">
+    <h1>Tests</h1>
+    <p id="total" class="total">Ejecutando…</p>
+    <div id="resultados"></div>
+  </main>
+
+  <script>
+    // Mini versión de `test` y `assert` de Node, para pasar los mismos tests
+    // en el navegador sin instalar nada.
+    let pasados = 0;
+    let fallados = 0;
+
+    function test(nombre, funcion) {
+      const linea = document.createElement("p");
+      linea.textContent = nombre;
+      try {
+        funcion();
+        pasados = pasados + 1;
+        linea.className = "resultado ok";
+      } catch (error) {
+        fallados = fallados + 1;
+        linea.className = "resultado fallo";
+        const detalle = document.createElement("span");
+        detalle.className = "detalle-fallo";
+        detalle.textContent = error.message;
+        linea.appendChild(detalle);
+      }
+      document.getElementById("resultados").appendChild(linea);
+    }
+
+    // Con `var` (y no `const`) queda en `window`, que es donde la busca logica.test.js
+    // Como en Node, el último parámetro (opcional) es un mensaje que ayuda a ver qué falló.
+    var assert = {
+      ok: function (valor, mensaje) {
+        if (!valor) {
+          throw new Error(mensaje || "Se esperaba un valor verdadero y llegó " + valor);
+        }
+      },
+      strictEqual: function (real, esperado, mensaje) {
+        if (real !== esperado) {
+          throw new Error((mensaje ? mensaje + ". " : "") + "Se esperaba " +
+            JSON.stringify(esperado) + " y llegó " + JSON.stringify(real));
+        }
+      },
+      // Compara listas y objetos por su contenido (convirtiéndolos a texto)
+      deepStrictEqual: function (real, esperado, mensaje) {
+        const textoReal = JSON.stringify(real);
+        const textoEsperado = JSON.stringify(esperado);
+        if (textoReal !== textoEsperado) {
+          throw new Error((mensaje ? mensaje + ". " : "") + "Se esperaba " +
+            textoEsperado + " y llegó " + textoReal);
+        }
+      },
+    };
+  </script>
+  <script src="logica.js"></script>
+  <script src="logica.test.js"></script>
+  <script>
+    const total = document.getElementById("total");
+    total.textContent = pasados + " pasados, " + fallados + " fallados";
+    total.className = fallados === 0 ? "total ok" : "total fallo";
+  </script>
+</body>
+</html>

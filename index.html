@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diario de Estudio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="contenedor">
+    <h1>Diario de Estudio</h1>
+
+    <!-- Resumen: racha actual y días estudiados en el mes -->
+    <section class="resumen">
+      <p class="racha">
+        <span id="racha" class="racha-numero">0</span>
+        <span id="racha-texto" class="racha-texto">días seguidos</span>
+      </p>
+      <p class="dias-mes">
+        <span id="dias-mes" class="dias-mes-numero">0</span>
+        <span id="dias-mes-texto">días estudiados este mes</span>
+      </p>
+    </section>
+
+    <!-- Mapa de calor: un cuadrado por día de las últimas 12 semanas.
+         Las iniciales van aquí fijas; las 84 casillas las añade app.js detrás. -->
+    <section class="bloque mapa" aria-labelledby="mapa-titulo">
+      <h2 id="mapa-titulo">Últimas 12 semanas</h2>
+      <div class="mapa-marco">
+        <div id="mapa" class="mapa-cuadricula" role="group" aria-labelledby="mapa-titulo">
+          <span class="mapa-inicial" aria-hidden="true">L</span>
+          <span class="mapa-inicial" aria-hidden="true">M</span>
+          <span class="mapa-inicial" aria-hidden="true">X</span>
+          <span class="mapa-inicial" aria-hidden="true">J</span>
+          <span class="mapa-inicial" aria-hidden="true">V</span>
+          <span class="mapa-inicial" aria-hidden="true">S</span>
+          <span class="mapa-inicial" aria-hidden="true">D</span>
+        </div>
+      </div>
+      <p id="mapa-detalle" class="mapa-detalle" aria-live="polite"></p>
+      <ul class="mapa-leyenda">
+        <li><span class="muestra nivel-0"></span>0 min</li>
+        <li><span class="muestra nivel-1"></span>1–29 min</li>
+        <li><span class="muestra nivel-2"></span>30–59 min</li>
+        <li><span class="muestra nivel-3"></span>60–119 min</li>
+        <li><span class="muestra nivel-4"></span>120 min o más</li>
+        <li><span class="muestra futuro"></span>Todavía no ha llegado</li>
+        <li><span class="muestra nivel-0 hoy"></span>Hoy</li>
+      </ul>
+    </section>
+
+    <!-- Formulario para registrar una sesión -->
+    <section class="bloque">
+      <h2>Nueva sesión</h2>
+      <form id="formulario">
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" required>
+
+        <label for="tema">Tema</label>
+        <input type="text" id="tema" placeholder="Ej.: Matemáticas" required>
+
+        <label for="minutos">Minutos</label>
+        <input type="number" id="minutos" min="1" step="1" placeholder="Ej.: 45" required>
+
+        <button type="submit" id="guardar-sesion">Guardar sesión</button>
+      </form>
+    </section>
+
+    <!-- Lista de sesiones. Cada sesión válida tiene «Editar» y «Borrar» (las añade app.js). -->
+    <section class="bloque" aria-labelledby="lista-titulo">
+      <!-- tabindex="-1": recibe el foco cuando la lista se queda vacía tras borrar -->
+      <h2 id="lista-titulo" tabindex="-1">Sesiones</h2>
+      <p id="aviso" class="aviso" role="status"></p>
+      <ul id="lista" class="lista"></ul>
+      <p id="vacio" class="vacio">Aún no hay sesiones. Registra la primera en el formulario de arriba.</p>
+      <button type="button" id="borrar-todas" class="boton-secundario boton-peligro borrar-todas">Borrar todas las sesiones</button>
+    </section>
+  </main>
+
+  <!-- Confirmación antes de borrar. Escape o «Cancelar» la cierran sin borrar nada. -->
+  <dialog id="confirmacion" class="confirmacion" aria-labelledby="confirmacion-texto">
+    <form method="dialog">
+      <p id="confirmacion-texto" class="confirmacion-texto"></p>
+      <div class="confirmacion-botones">
+        <button type="submit" value="cancelar" id="confirmacion-cancelar" class="boton-secundario">Cancelar</button>
+        <button type="submit" value="borrar" id="confirmacion-borrar" class="boton-borrar">Borrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="logica.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
